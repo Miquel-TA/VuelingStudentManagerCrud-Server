@@ -4,16 +4,16 @@ namespace Vueling.Crosscutting.Models
 {
     public static class Utils
     {
-        public static int GetAgeFromBirthday(DateTime birthday)
+        public static short GetAgeFromBirthday(DateTime birthday)
         {
-            var today = DateTime.Today;
-            var age = today.Year - birthday.Year;
+            DateTime today = DateTime.Today;
+            int age = today.Year - birthday.Year;
 
             if (birthday > today.AddYears(-age))
             {
                 age--;
             }
-            return age;
+            return Convert.ToInt16(age);
         }
 
         public static bool VerifyDateTime(DateTime birthday)
