@@ -7,78 +7,80 @@ namespace Vueling.Business.Logic
 {
     public class BusinessLogic
     {
-        private readonly DatabaseInteraction DbInteraction = new DatabaseInteraction();
+        private readonly InfrastructureRepository Infrastructure = new InfrastructureRepository();
 
         public bool DeleteStudent(Student student)
         {
+            bool success = false;
             try
             {
-                bool success = DbInteraction.DeleteStudent(student);
-                if (success)
+                if
+                (
+                    Utils.VerifyDateTime(student.Birthday) &&
+                    Utils.VerifyName(student.Name) &&
+                    Utils.VerifyName(student.Surname)
+                )
                 {
-                    Logger.Log("Database didn't delete Student: " + student.ToString(), Logger.Severity.Warning);
+                    success = Infrastructure.DeleteStudent(student);
+                    if (success)
+                    {
+                        Logger.Log("Deleted Student: " + student.ToString(), Logger.Severity.Info);
+                    }
+                    else
+                    {
+                        Logger.Log("Database didn't delete Student: " + student.ToString(), Logger.Severity.Warning);
+                    }
                 }
                 else
                 {
-                    Logger.Log("Deleted Student: " + student.ToString(), Logger.Severity.Info);
+                    Logger.Log("Failed to validate a student deletion: " + student.ToString(), Logger.Severity.Warning);
                 }
-                return success;
             }
             catch (Exception ex)
             {
                 Logger.Log(ex.Message, Logger.Severity.Error);
                 Logger.Log(ex.StackTrace, Logger.Severity.Error);
-                return false;
             }
+            return success;
         }
         public bool UpdateStudent(Student student)
         {
+            bool success = false;
             try
             {
-                bool success = DbInteraction.UpdateStudent(student);
-                if (success)
+                if
+                (
+                    Utils.VerifyDateTime(student.Birthday) &&
+                    Utils.VerifyName(student.Name) &&
+                    Utils.VerifyName(student.Surname)
+                )
                 {
-                    Logger.Log("Updated Student: " + student.ToString(), Logger.Severity.Info);
+                    success = Infrastructure.UpdateStudent(student);
+                    if (success)
+                    {
+                        Logger.Log("Updated Student: " + student.ToString(), Logger.Severity.Info);
+                    }
+                    else
+                    {
+                        Logger.Log("Database didn't update Student: " + student.ToString(), Logger.Severity.Warning);
+                    }
                 }
                 else
                 {
-                    Logger.Log("Failed to update Student: " + student.ToString(), Logger.Severity.Warning);
+                    Logger.Log("Failed to verify an update to an existing student: " + student.ToString(), Logger.Severity.Warning);
                 }
-                return success;
             }
             catch (Exception ex)
             {
                 Logger.Log(ex.Message, Logger.Severity.Error);
                 Logger.Log(ex.StackTrace, Logger.Severity.Error);
-                return false;
             }
-        }
-
-        public List<Student> GetAllStudents()
-        {
-            try
-            {
-                List<Student> studentsReturned = DbInteraction.GetAllStudents();
-                if (studentsReturned.Count > 0)
-                {
-                    Logger.Log("Database returned " + studentsReturned.Count + " Students.", Logger.Severity.Info);
-                }
-                else
-                {
-                    Logger.Log("Database returned an empty Student list.", Logger.Severity.Warning);
-                }
-                return studentsReturned;
-            }
-            catch (Exception ex)
-            {
-                Logger.Log(ex.Message, Logger.Severity.Error);
-                Logger.Log(ex.StackTrace, Logger.Severity.Error);
-                return new List<Student>();
-            }
+            return success;
         }
 
         public bool AddStudent(Student student)
         {
+            bool success = false;
             try
             {
                 if
@@ -89,7 +91,7 @@ namespace Vueling.Business.Logic
                 )
                 {
                     student.Age = Utils.GetAgeFromBirthday(student.Birthday);
-                    bool success = DbInteraction.AddStudent(student);
+                    success = Infrastructure.AddStudent(student);
                     if (success)
                     {
                         Logger.Log("Inserted Student: " + student.ToString(), Logger.Severity.Info);
@@ -98,22 +100,41 @@ namespace Vueling.Business.Logic
                     {
                         Logger.Log("Database didn't insert Student: " + student.ToString(), Logger.Severity.Warning);
                     }
-                    return success;
                 }
                 else
                 {
-                    Logger.Log("Failed to verify a new student: " + student.ToString(), Logger.Severity.Warning);
-                    return false;
+                    Logger.Log("Failed to verify values of a new student: " + student.ToString(), Logger.Severity.Warning);
                 }
             }
             catch (Exception ex)
             {
                 Logger.Log(ex.Message, Logger.Severity.Error);
                 Logger.Log(ex.StackTrace, Logger.Severity.Error);
-                return false;
             }
-            
+            return success;
+        }
 
+        public List<Student> GetAllStudents()
+        {
+            List<Student> studentsReturned = new List<Student>();
+            try
+            {
+                studentsReturned = Infrastructure.GetAllStudents();
+                if (studentsReturned.Count > 0)
+                {
+                    Logger.Log("Database returned " + studentsReturned.Count + " Students.", Logger.Severity.Info);
+                }
+                else
+                {
+                    Logger.Log("Database returned an empty Student list.", Logger.Severity.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex.Message, Logger.Severity.Error);
+                Logger.Log(ex.StackTrace, Logger.Severity.Error);
+            }
+            return studentsReturned;
         }
 
     }

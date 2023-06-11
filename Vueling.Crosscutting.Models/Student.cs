@@ -30,7 +30,6 @@ namespace Vueling.Crosscutting.Models
 
         public Student() { }
 
-
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

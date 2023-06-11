@@ -6,7 +6,7 @@ using Vueling.Crosscutting.Models;
 
 namespace Vueling.Infrastructure.Repository
 {
-    public class DatabaseInteraction
+    public class InfrastructureRepository
     {
         private readonly string ConnectionString = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
 

@@ -6,7 +6,6 @@ using Vueling.Crosscutting.Models;
 
 namespace Vueling.Api.WCF
 {
-    // NOTA: puede usar el comando "Rename" del menú "Refactorizar" para cambiar el nombre de clase "Service1" en el código y en el archivo de configuración a la vez.
     public class Service1 : IService1
     {
         private readonly BusinessLogic BusinessLogic = new BusinessLogic();
